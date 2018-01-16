@@ -1,0 +1,152 @@
+.header {
+    margin-bottom: 20px;
+}
+
+.header .logo {
+    width: 200px;
+    float: right;
+    margin-right: 20px;
+}
+
+.header h1 {
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.badge {
+    padding: 4px 8px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.badge.badge-error,
+.badge.badge-failure {
+    background: #e74c3c;
+}
+
+.badge.badge-success {
+    background: #1abc9c;
+}
+
+.badge.badge-running {
+    background: #3498db;
+}
+
+.badge.badge-warning {
+    background: #ED7004;
+}
+
+table.test-table {
+    width: 100%;
+}
+
+table.test-table thead tr th {
+    text-align: left;
+    padding: 11px 10px 9px;
+    background: #f5f5f5;
+    border: 0 !important;
+}
+
+table.test-table thead tr th.id {
+    width: 100px;
+}
+
+table.test-table thead tr th.status {
+    width: 120px;
+}
+
+table.test-table thead tr th.environment {
+    width: 200px;
+}
+
+table.test-table thead tr th.run-date {
+    width: 170px;
+}
+
+table.test-table thead tr th.runtime {
+    width: 100px;
+}
+
+table.test-table tbody tr td {
+    padding: 11px 10px 9px;
+    vertical-align: middle;
+}
+
+table.test-table tbody tr td.message-column {
+    word-wrap: break-word;
+}
+
+table.test-table tbody tr td a {
+    color: #777;
+    text-decoration: none !important;
+}
+
+table.test-table tbody tr td a:hover {
+    color: #333;
+}
+
+table.test-table tbody tr td .mobile-th {
+    display: none;
+}
+
+table.test-table tbody tr:nth-child(even) td {
+    background: #fafafa;
+}
+
+table.test-table tbody tr td .operating-system,
+table.test-table tbody tr td .browser {
+    display: block;
+    position: relative;
+}
+
+table.test-table tbody tr td .operating-system {
+    margin-bottom: 5px;
+}
+
+table.test-table tbody tr td .operating-system img,
+table.test-table tbody tr td .browser img {
+    width: 20px;
+    height: 20px;
+}
+
+table.test-table tbody tr td .operating-system .text,
+table.test-table tbody tr td .browser .text {
+    position: absolute;
+    padding-left: 30px;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+table.test-table tbody tr td p {
+    margin: 0;
+}
+
+@media (max-width: 970px) {
+    .header .logo {
+        display: block;
+        float: none;
+    }
+
+    .header h1 {
+        display: block;
+    }
+
+    table.test-table thead tr th {
+        display: none;
+    }
+
+    table.test-table tbody tr td {
+        display: block;
+        width: 100%;
+    }
+
+    table.test-table tbody tr td .mobile-th {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+}
