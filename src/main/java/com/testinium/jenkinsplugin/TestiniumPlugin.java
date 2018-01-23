@@ -55,9 +55,9 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
     private static Map<String, String> titleTextStore = new HashMap<>();
 
     @Setter(onMethod = @__({@DataBoundSetter}))
-    final Integer projectId;
+    Integer projectId;
     @Setter(onMethod = @__({@DataBoundSetter}))
-    final Integer planId;
+    Integer planId;
     @Setter(onMethod = @__({@DataBoundSetter}))
     Integer timeoutSeconds = null;
     @Setter(onMethod = @__({@DataBoundSetter}))
