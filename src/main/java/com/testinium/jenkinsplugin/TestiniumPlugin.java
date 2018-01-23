@@ -32,6 +32,7 @@ import lombok.Setter;
 import org.apache.commons.httpclient.auth.InvalidCredentialsException;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
@@ -52,33 +53,36 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private static Map<String, String> titleTextStore = new HashMap<>();
-    Integer projectId;
-    Integer planId;
+
+    @Setter(onMethod = @__({@DataBoundSetter}))
+    final Integer projectId;
+    @Setter(onMethod = @__({@DataBoundSetter}))
+    final Integer planId;
+    @Setter(onMethod = @__({@DataBoundSetter}))
     Integer timeoutSeconds = null;
+    @Setter(onMethod = @__({@DataBoundSetter}))
     Boolean failOnTimeout = false;
+    @Setter(onMethod = @__({@DataBoundSetter}))
     Boolean ignoreInactive = false;
+    @Setter(onMethod = @__({@DataBoundSetter}))
     Boolean abortOnError = true;
+    @Setter(onMethod = @__({@DataBoundSetter}))
     Boolean abortOnFailed = true;
 
     @DataBoundConstructor
-    public TestiniumPlugin(Integer projectId, Integer planId, Integer timeoutSeconds, Boolean failOnTimeout, Boolean ignoreInactive, Boolean abortOnFailed, Boolean abortOnError) {
+    public TestiniumPlugin(@Nonnull  Integer projectId, @Nonnull  Integer planId) {
         this.projectId = projectId;
         this.planId = planId;
-        this.timeoutSeconds = timeoutSeconds;
-        this.failOnTimeout = failOnTimeout;
-        this.ignoreInactive = ignoreInactive;
-        this.abortOnError = abortOnError;
-        this.abortOnFailed = abortOnFailed;
     }
 
     public TestiniumPlugin(TestiniumStep step) {
-        this(step.getProjectId(),
-                step.getPlanId(),
-                step.getTimeoutSeconds(),
-                step.getFailOnTimeout(),
-                step.getIgnoreInactive(),
-                step.getAbortOnFailed(),
-                step.getAbortOnError());
+        this.projectId = step.getProjectId();
+        this.planId = step.getPlanId();
+        this.timeoutSeconds = step.getTimeoutSeconds();
+        this.failOnTimeout = step.getFailOnTimeout();
+        this.ignoreInactive = step.getIgnoreInactive();
+        this.abortOnError = step.getAbortOnError();
+        this.abortOnFailed = step.getAbortOnFailed();
     }
 
     private static TestiniumService prepareService(Run run) throws AbortException {
