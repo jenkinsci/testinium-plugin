@@ -26,6 +26,26 @@
     <packaging>hpi</packaging>
     <description>Plugin to integrate jenkins with Testinium. http://www.testinium.com/</description>
 
+    <url>https://wiki.jenkins.io/display/JENKINS/Testinium+Plugin</url>
+
+    <developers>
+        <developer>
+            <id>erhangullu</id>
+            <name>Erhan GULLU</name>
+            <email>erhan.gullu@sahabt.com</email>
+        </developer>
+        <developer>
+            <id>suayipozmen</id>
+            <name>Suayip Ozmen</name>
+            <email>suayip.ozmen@sahabt.com</email>
+        </developer>
+        <developer>
+            <id>erdoganonur</id>
+            <name>Onur Erdogan</name>
+            <email>onur.erdogan@sahabt.com</email>
+        </developer>
+    </developers>
+
     <properties>
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
         <jenkins.version>2.7.3</jenkins.version>
