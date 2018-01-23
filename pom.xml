@@ -22,7 +22,7 @@
     <groupId>com.testinium.jenkins</groupId>
     <artifactId>testinium</artifactId>
     <name>Testinium Plugin</name>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <description>Plugin to integrate jenkins with Testinium. http://www.testinium.com/</description>
 
@@ -34,7 +34,7 @@
         <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
         <tag>HEAD</tag>
     </scm>
-    
+
     <developers>
         <developer>
             <id>erhangullu</id>
