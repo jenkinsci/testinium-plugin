@@ -20,7 +20,7 @@
     <groupId>com.testinium.jenkins</groupId>
     <artifactId>testinium</artifactId>
     <name>Testinium Plugin</name>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <description>Plugin to integrate jenkins with Testinium. http://www.testinium.com/</description>
 
@@ -30,7 +30,7 @@
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
-        <tag>testinium-1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
