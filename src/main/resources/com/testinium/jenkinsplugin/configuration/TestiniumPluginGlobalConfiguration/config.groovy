@@ -9,6 +9,10 @@ c = namespace(CredentialsTagLib.class)
 style(".credentials-add-menu {width: 100%;}")
 
 f.section(title: "Testinium Plugin") {
+    f.entry(title: _("testiniumHost"), field: 'testiniumHost') {
+        f.textbox()
+    }
+
     f.entry(title: _("personalToken"), field: 'personalToken') {
         f.textbox()
     }

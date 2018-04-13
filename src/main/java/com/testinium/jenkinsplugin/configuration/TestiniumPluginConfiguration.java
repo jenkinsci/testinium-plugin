@@ -13,9 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TestiniumPluginConfiguration {
+
+    private String testiniumHost;
+    private String personalToken;
     private String credentialsId;
     private String dateTimeFormat;
-    private String personalToken;
+
 
     public static TestiniumPluginConfiguration get(Item item) {
         TestiniumPluginConfiguration configuration = getTestiniumPluginFolderConfiguration(item);
@@ -24,10 +27,14 @@ public class TestiniumPluginConfiguration {
 
         configuration.fillEmptyValues(testiniumGlobalConfig);
 
-
+        String testiniumHost = configuration.getTestiniumHost();
         String credentialsId = configuration.getCredentialsId();
         String dateFormat = configuration.getDateTimeFormat();
         String personalToken = configuration.getPersonalToken();
+
+        if (testiniumHost != null && testiniumHost.isEmpty()) {
+            configuration.setTestiniumHost(null);
+        }
 
         if (credentialsId != null && credentialsId.isEmpty()) {
             configuration.setCredentialsId(null);
@@ -87,6 +94,9 @@ public class TestiniumPluginConfiguration {
 
     private void fillEmptyValues(TestiniumPluginConfiguration testiniumConfig) {
         if (testiniumConfig != null && (isEmpty(credentialsId) || isEmpty(dateTimeFormat))) {
+            if (isEmpty(testiniumHost) && testiniumConfig.getTestiniumHost() != null && !testiniumConfig.getTestiniumHost().isEmpty()) {
+                this.setTestiniumHost(testiniumConfig.getTestiniumHost());
+            }
             if (isEmpty(credentialsId) && testiniumConfig.getCredentialsId() != null && !testiniumConfig.getCredentialsId().isEmpty()) {
                 this.setCredentialsId(testiniumConfig.getCredentialsId());
             }

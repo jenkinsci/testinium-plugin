@@ -23,18 +23,22 @@ import javax.annotation.Nonnull;
 @Setter
 public class TestiniumPluginFolderConfiguration extends AbstractFolderProperty<AbstractFolder<?>> {
 
+    private String testiniumHost;
+    private String personalToken;
     private String credentialsId;
     private String datetimeFormat = "yyyy-MM-dd\'T\'HH:mm:ssZ";
-    private String personalToken;
+
 
     @DataBoundConstructor
-    public TestiniumPluginFolderConfiguration(String credentialsId, String datetimeFormat) {
-        this.credentialsId = credentialsId;
+    public TestiniumPluginFolderConfiguration(String testiniumHost, String personalToken, String credentialsId, String datetimeFormat) {
+        this.testiniumHost = testiniumHost;
         this.datetimeFormat = datetimeFormat;
+        this.credentialsId = credentialsId;
+        this.personalToken = personalToken;
     }
 
     public TestiniumPluginConfiguration getConfiguration() {
-        return new TestiniumPluginConfiguration(credentialsId, datetimeFormat, personalToken);
+        return new TestiniumPluginConfiguration(testiniumHost, personalToken, credentialsId, datetimeFormat);
     }
 
     @Override

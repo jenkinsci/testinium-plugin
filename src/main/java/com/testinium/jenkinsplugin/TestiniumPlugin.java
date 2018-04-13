@@ -70,7 +70,7 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
     Boolean abortOnFailed = true;
 
     @DataBoundConstructor
-    public TestiniumPlugin(@Nonnull  Integer projectId, @Nonnull  Integer planId) {
+    public TestiniumPlugin(@Nonnull Integer projectId, @Nonnull Integer planId) {
         this.projectId = projectId;
         this.planId = planId;
     }
@@ -91,10 +91,10 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         if (credentialsId == null) {
             throw new AbortException(Messages.TestiniumPlugin_InvalidCredentials());
         }
-        return prepareService(properties.getPersonalToken(), getCredential(run, credentialsId));
+        return prepareService(properties.getTestiniumHost(), properties.getPersonalToken(), getCredential(run, credentialsId));
     }
 
-    private static TestiniumService prepareService(String personalToken, UsernamePasswordCredentials credentials) throws AbortException {
+    private static TestiniumService prepareService(String testiniumHost, String personalToken, UsernamePasswordCredentials credentials) throws AbortException {
         try {
             if (credentials == null) {
                 throw new InvalidCredentialsException(Messages.TestiniumPlugin_CredentialsError());
@@ -103,7 +103,7 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
             String username = credentials.getUsername();
             String password = credentials.getPassword().getPlainText();
 
-            TestiniumService testiniumService = new TestiniumService();
+            TestiniumService testiniumService = new TestiniumService(testiniumHost);
             testiniumService.authorize(personalToken, username, password);
 
             return testiniumService;
@@ -415,7 +415,7 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
             UsernamePasswordCredentials credentials = getCredential(project, credentialsId);
             TestiniumService testiniumService;
             try {
-                testiniumService = TestiniumPlugin.prepareService(properties.getPersonalToken(), credentials);
+                testiniumService = TestiniumPlugin.prepareService(properties.getTestiniumHost(), properties.getPersonalToken(), credentials);
             } catch (Exception ex) {
                 return null;
             }

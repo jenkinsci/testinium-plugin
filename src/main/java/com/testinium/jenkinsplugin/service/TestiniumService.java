@@ -24,55 +24,58 @@ public class TestiniumService {
 
     private static final Logger LOGGER = Logger.getLogger(TestiniumService.class.getName());
 
-    private static final String AUTHENTICATION_URL = "https://account.testinium.com";
-    private static final String TESTINIUM_API_URL = "https://testinium.io/Testinium.RestApi/api";
-    private static final String AUTH_SCOPE = "openid";
+
+    private static final String AUTHENTICATION_URL = "/Testinium.RestApi/oauth";
+    private static final String TESTINIUM_API_URL = "/Testinium.RestApi/api";
+    private static final String AUTH_SCOPE = "api";
     private static final String AUTH_GRANT_TYPE = "password";
+
+    private final String testiniumHost;
 
     private TestiniumRestClient restClient;
     private TestiniumAuthenticationClient authenticationClient;
     private TestiniumRestRequestInterceptor requestInterceptor;
     private TestiniumAuthenticationInterceptor authInterceptor;
 
-    public TestiniumService() {
+    public TestiniumService(String testiniumHost) {
         Gson gson = buildGson();
 
-        this.requestInterceptor = new TestiniumRestRequestInterceptor();
-        this.restClient = createClient(gson, this.requestInterceptor);
+        this.testiniumHost = testiniumHost;
 
-        this.authInterceptor =  new TestiniumAuthenticationInterceptor();
-        this.authenticationClient = createAuthenticationClient(gson, this.authInterceptor);
+        this.requestInterceptor = new TestiniumRestRequestInterceptor();
+        this.restClient = createClient(testiniumHost, gson, this.requestInterceptor);
+
+        this.authInterceptor = new TestiniumAuthenticationInterceptor();
+        this.authenticationClient = createAuthenticationClient(testiniumHost, gson, this.authInterceptor);
     }
 
-    private TestiniumAuthenticationClient createAuthenticationClient(Gson gson, TestiniumAuthenticationInterceptor interceptor) {
+    private TestiniumAuthenticationClient createAuthenticationClient(String testiniumHost, Gson gson, TestiniumAuthenticationInterceptor interceptor) {
+        String authenticationURL = testiniumHost + AUTHENTICATION_URL;
         return Feign.builder()
                 .requestInterceptor(interceptor)
                 .encoder(new FormEncoder(new GsonEncoder()))
                 .decoder(new GsonDecoder(gson))
-                .target(TestiniumAuthenticationClient.class, AUTHENTICATION_URL);
+                .target(TestiniumAuthenticationClient.class, authenticationURL);
 
     }
 
-    private TestiniumRestClient createClient(Gson gson, TestiniumRestRequestInterceptor requestInterceptor) {
+    private TestiniumRestClient createClient(String testiniumHost, Gson gson, TestiniumRestRequestInterceptor requestInterceptor) {
+        String apiURL = testiniumHost + TESTINIUM_API_URL;
         return Feign.builder()
                 .requestInterceptor(requestInterceptor)
                 .encoder(new FormEncoder(new GsonEncoder()))
                 .decoder(new GsonDecoder(gson))
-                .target(TestiniumRestClient.class, TESTINIUM_API_URL);
-
-
+                .target(TestiniumRestClient.class, apiURL);
     }
 
     private Gson buildGson() {
         GsonBuilder builder = new GsonBuilder();
-
         builder.registerTypeAdapter(Date.class, new DateDeserializer());
-
         return builder.create();
     }
 
 
-    public void authorize(String authPersonalToken,String userName, String password) throws InvalidCredentialsException {
+    public void authorize(String authPersonalToken, String userName, String password) throws InvalidCredentialsException {
         try {
             authInterceptor.setPersonalAuthToken(authPersonalToken);
             AuthResult authResult = authenticationClient.login(userName, password, AUTH_SCOPE, AUTH_GRANT_TYPE);

@@ -33,16 +33,17 @@ import java.util.UUID;
 @Extension
 public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
 
-
+    private String testiniumHost;
+    private String personalToken;
     private String credentialsId;
     private String datetimeFormat = "yyyy-MM-dd\'T\'HH:mm:ssZ";
-    private String personalToken;
 
     public TestiniumPluginGlobalConfiguration() {
         load();
     }
 
-    public TestiniumPluginGlobalConfiguration(String credentialsId, String datetimeFormat, String personalToken) {
+    public TestiniumPluginGlobalConfiguration(String testiniumHost, String personalToken, String credentialsId, String datetimeFormat) {
+        this.testiniumHost = testiniumHost;
         this.datetimeFormat = datetimeFormat;
         this.credentialsId = credentialsId;
         this.personalToken = personalToken;
@@ -54,7 +55,7 @@ public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
     }
 
     public TestiniumPluginConfiguration getConfiguration() {
-        return new TestiniumPluginConfiguration(credentialsId, datetimeFormat, personalToken);
+        return new TestiniumPluginConfiguration(testiniumHost, personalToken, credentialsId, datetimeFormat);
     }
 
 
@@ -109,7 +110,7 @@ public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
 
     public FormValidation doCheckPersonalToken(@QueryParameter String personalToken) {
 
-        if(personalToken == null || personalToken.isEmpty()){
+        if (personalToken == null || personalToken.isEmpty()) {
             return FormValidation.error("Personal token cannot be empty");
         }
         return FormValidation.ok();

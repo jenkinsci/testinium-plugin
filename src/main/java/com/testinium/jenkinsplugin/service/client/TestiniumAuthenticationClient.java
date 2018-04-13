@@ -7,7 +7,7 @@ import feign.RequestLine;
 
 public interface TestiniumAuthenticationClient {
 
-    @RequestLine("POST /uaa/oauth/token")
+    @RequestLine("POST /token")
     @Headers("Content-Type: application/x-www-form-urlencoded")
     AuthResult login(@Param("username") String email, @Param("password") String password,
                      @Param("scope") String scope, @Param("grant_type") String grantType);
