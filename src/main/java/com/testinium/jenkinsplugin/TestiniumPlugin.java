@@ -1,12 +1,10 @@
 package com.testinium.jenkinsplugin;
 
 import com.cloudbees.plugins.credentials.CredentialsProvider;
-import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-import com.cloudbees.plugins.credentials.common.UsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
-import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.testinium.jenkinsplugin.action.TestiniumResultAction;
 import com.testinium.jenkinsplugin.configuration.TestiniumPluginConfiguration;
+import com.testinium.jenkinsplugin.credentials.TestiniumCredentials;
 import com.testinium.jenkinsplugin.exception.TimeoutException;
 import com.testinium.jenkinsplugin.model.ExecutionResult;
 import com.testinium.jenkinsplugin.pipeline.TestiniumStep;
@@ -30,6 +28,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.httpclient.auth.InvalidCredentialsException;
+import org.jenkins.ui.icon.Icon;
+import org.jenkins.ui.icon.IconSet;
+import org.jenkins.ui.icon.IconType;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -94,17 +95,17 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         return prepareService(properties.getPersonalToken(), getCredential(run, credentialsId));
     }
 
-    private static TestiniumService prepareService(String personalToken, UsernamePasswordCredentials credentials) throws AbortException {
+    private static TestiniumService prepareService(String personalToken, TestiniumCredentials credentials) throws AbortException {
         try {
             if (credentials == null) {
                 throw new InvalidCredentialsException(Messages.TestiniumPlugin_CredentialsError());
             }
 
             String username = credentials.getUsername();
-            String password = credentials.getPassword().getPlainText();
+            String accessKey = credentials.getAccessKey().getPlainText();
 
             TestiniumService testiniumService = new TestiniumService();
-            testiniumService.authorize(personalToken, username, password);
+            testiniumService.authorize(personalToken, username, accessKey);
 
             return testiniumService;
 
@@ -113,13 +114,8 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         }
     }
 
-    private static UsernamePasswordCredentials getCredential(Run run, String credentialsId) {
-        return CredentialsProvider.findCredentialById(
-                credentialsId,
-                StandardUsernamePasswordCredentials.class,
-                run,
-                Collections.<DomainRequirement>emptyList()
-        );
+    private static TestiniumCredentials getCredential(Run run, String credentialsId) {
+        return CredentialsProvider.findCredentialById(credentialsId, TestiniumCredentials.class, run, Collections.<DomainRequirement>emptyList());
     }
 
     private static synchronized String getStatusTitle(String statusText) {
@@ -412,7 +408,7 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
             if (credentialsId == null) {
                 return null;
             }
-            UsernamePasswordCredentials credentials = getCredential(project, credentialsId);
+            TestiniumCredentials credentials = getCredential(project, credentialsId);
             TestiniumService testiniumService;
             try {
                 testiniumService = TestiniumPlugin.prepareService(properties.getPersonalToken(), credentials);
@@ -422,14 +418,10 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
             return testiniumService;
         }
 
-        private static UsernamePasswordCredentials getCredential(Item project, String credentialsId) {
-            List<UsernamePasswordCredentialsImpl> credentialsList = CredentialsProvider.lookupCredentials(
-                    UsernamePasswordCredentialsImpl.class,
-                    project,
-                    ACL.SYSTEM,
-                    Collections.<DomainRequirement>emptyList());
+        private static TestiniumCredentials getCredential(Item project, String credentialsId) {
+            List<TestiniumCredentials> credentialsList = CredentialsProvider.lookupCredentials(TestiniumCredentials.class, project, ACL.SYSTEM, Collections.<DomainRequirement>emptyList());
 
-            for (UsernamePasswordCredentialsImpl credentials : credentialsList) {
+            for (TestiniumCredentials credentials : credentialsList) {
                 if (credentials.getId().equals(credentialsId))
                     return credentials;
             }
