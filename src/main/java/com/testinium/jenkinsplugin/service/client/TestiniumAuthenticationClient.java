@@ -9,7 +9,7 @@ public interface TestiniumAuthenticationClient {
 
     @RequestLine("POST /uaa/oauth/token")
     @Headers("Content-Type: application/x-www-form-urlencoded")
-    AuthResult login(@Param("username") String email, @Param("access_key") String password,
+    AuthResult login(@Param("username") String email, @Param("password") String password,
                      @Param("scope") String scope, @Param("grant_type") String grantType);
 
 

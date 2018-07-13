@@ -27,7 +27,7 @@ public class TestiniumService {
     private static final String AUTHENTICATION_URL = "https://account.testinium.com";
     private static final String TESTINIUM_API_URL = "https://testinium.io/Testinium.RestApi/api";
     private static final String AUTH_SCOPE = "openid";
-    private static final String AUTH_ACCESS_KEY_GRANT_TYPE = "testinium_access_key";
+    private static final String AUTH_GRANT_TYPE = "password";
 
     private TestiniumRestClient restClient;
     private TestiniumAuthenticationClient authenticationClient;
@@ -72,10 +72,10 @@ public class TestiniumService {
     }
 
 
-    public void authorize(String authPersonalToken,String userName, String accessKey) throws InvalidCredentialsException {
+    public void authorize(String authPersonalToken,String userName, String password) throws InvalidCredentialsException {
         try {
             authInterceptor.setPersonalAuthToken(authPersonalToken);
-            AuthResult authResult = authenticationClient.login(userName, accessKey, AUTH_SCOPE, AUTH_ACCESS_KEY_GRANT_TYPE);
+            AuthResult authResult = authenticationClient.login(userName, password, AUTH_SCOPE, AUTH_GRANT_TYPE);
             String accessToken = authResult.getAccessToken();
             requestInterceptor.setBearerToken(accessToken);
         } catch (Exception ex) {
