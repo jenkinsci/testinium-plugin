@@ -24,21 +24,21 @@ import javax.annotation.Nonnull;
 public class TestiniumPluginFolderConfiguration extends AbstractFolderProperty<AbstractFolder<?>> {
 
     private String testiniumHost;
-    private String personalToken;
+    private String testiniumClientID;
     private String credentialsId;
     private String datetimeFormat = "yyyy-MM-dd\'T\'HH:mm:ssZ";
 
 
     @DataBoundConstructor
-    public TestiniumPluginFolderConfiguration(String testiniumHost, String personalToken, String credentialsId, String datetimeFormat) {
+    public TestiniumPluginFolderConfiguration(String testiniumHost, String testiniumClientID, String credentialsId, String datetimeFormat) {
         this.testiniumHost = testiniumHost;
         this.datetimeFormat = datetimeFormat;
         this.credentialsId = credentialsId;
-        this.personalToken = personalToken;
+        this.testiniumClientID = testiniumClientID;
     }
 
     public TestiniumPluginConfiguration getConfiguration() {
-        return new TestiniumPluginConfiguration(testiniumHost, personalToken, credentialsId, datetimeFormat);
+        return new TestiniumPluginConfiguration(testiniumHost, testiniumClientID, credentialsId, datetimeFormat);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class TestiniumPluginFolderConfiguration extends AbstractFolderProperty<A
             return TestiniumPluginGlobalConfiguration.get().doCheckDatetimeFormat(datetimeFormat);
         }
 
-        public FormValidation doCheckPersonalToken(@QueryParameter String personalToken) {
-            return TestiniumPluginGlobalConfiguration.get().doCheckPersonalToken(personalToken);
+        public FormValidation doCheckTestiniumClientID(@QueryParameter String testiniumClientID) {
+            return TestiniumPluginGlobalConfiguration.get().doCheckTestiniumClientID(testiniumClientID);
         }
     }
 }

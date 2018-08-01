@@ -13,7 +13,7 @@ f.section(title: "Testinium Plugin") {
         f.textbox()
     }
 
-    f.entry(title: _("personalToken"), field: 'personalToken') {
+    f.entry(title: _("testiniumClientID"), field: 'testiniumClientID') {
         f.textbox()
     }
 

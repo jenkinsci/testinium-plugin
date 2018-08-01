@@ -8,12 +8,12 @@ public class TestiniumAuthenticationInterceptor extends TestiniumRequestIntercep
 
     @Getter
     @Setter
-    private String personalAuthToken;
+    private String testiniumClientID;
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
         super.apply(requestTemplate);
-        requestTemplate.header("Authorization", "Basic " + personalAuthToken);
+        requestTemplate.header("Authorization", "Basic " + testiniumClientID);
 
     }
 
