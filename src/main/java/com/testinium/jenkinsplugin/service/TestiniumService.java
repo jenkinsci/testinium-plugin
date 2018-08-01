@@ -75,9 +75,9 @@ public class TestiniumService {
     }
 
 
-    public void authorize(String authPersonalToken, String userName, String password) throws InvalidCredentialsException {
+    public void authorize(String authTestiniumClientID, String userName, String password) throws InvalidCredentialsException {
         try {
-            authInterceptor.setPersonalAuthToken(authPersonalToken);
+            authInterceptor.setTestiniumClientID(authTestiniumClientID);
             AuthResult authResult = authenticationClient.login(userName, password, AUTH_SCOPE, AUTH_GRANT_TYPE);
             String accessToken = authResult.getAccessToken();
             requestInterceptor.setBearerToken(accessToken);

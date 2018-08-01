@@ -15,7 +15,7 @@ import lombok.Setter;
 public class TestiniumPluginConfiguration {
 
     private String testiniumHost;
-    private String personalToken;
+    private String testiniumClientID;
     private String credentialsId;
     private String dateTimeFormat;
 
@@ -30,7 +30,7 @@ public class TestiniumPluginConfiguration {
         String testiniumHost = configuration.getTestiniumHost();
         String credentialsId = configuration.getCredentialsId();
         String dateFormat = configuration.getDateTimeFormat();
-        String personalToken = configuration.getPersonalToken();
+        String testiniumClientID = configuration.getTestiniumClientID();
 
         if (testiniumHost != null && testiniumHost.isEmpty()) {
             configuration.setTestiniumHost(null);
@@ -44,8 +44,8 @@ public class TestiniumPluginConfiguration {
             configuration.setDateTimeFormat(null);
         }
 
-        if (personalToken != null && personalToken.isEmpty()) {
-            configuration.setPersonalToken(null);
+        if (testiniumClientID != null && testiniumClientID.isEmpty()) {
+            configuration.setTestiniumClientID(null);
         }
 
         return configuration;
@@ -63,7 +63,7 @@ public class TestiniumPluginConfiguration {
                 configuration = getTestiniumFolderConfiguration(configuration, (AbstractFolder) parent);
             }
 
-            if (configuration != null && !isEmpty(configuration.getCredentialsId()) && !isEmpty(configuration.getDateTimeFormat()) && !isEmpty(configuration.getPersonalToken())) {
+            if (configuration != null && !isEmpty(configuration.getCredentialsId()) && !isEmpty(configuration.getDateTimeFormat()) && !isEmpty(configuration.getTestiniumClientID())) {
                 break;
             }
 
@@ -103,8 +103,8 @@ public class TestiniumPluginConfiguration {
             if (isEmpty(dateTimeFormat) && testiniumConfig.getDateTimeFormat() != null && !testiniumConfig.getDateTimeFormat().isEmpty()) {
                 this.setDateTimeFormat(testiniumConfig.getDateTimeFormat());
             }
-            if (isEmpty(personalToken) && testiniumConfig.getPersonalToken() != null && !testiniumConfig.getPersonalToken().isEmpty()) {
-                this.setPersonalToken(testiniumConfig.getPersonalToken());
+            if (isEmpty(testiniumClientID) && testiniumConfig.getTestiniumClientID() != null && !testiniumConfig.getTestiniumClientID().isEmpty()) {
+                this.setTestiniumClientID(testiniumConfig.getTestiniumClientID());
             }
         }
     }

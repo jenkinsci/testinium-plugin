@@ -34,7 +34,7 @@ import java.util.UUID;
 public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
 
     private String testiniumHost;
-    private String personalToken;
+    private String testiniumClientID;
     private String credentialsId;
     private String datetimeFormat = "yyyy-MM-dd\'T\'HH:mm:ssZ";
 
@@ -42,11 +42,11 @@ public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
         load();
     }
 
-    public TestiniumPluginGlobalConfiguration(String testiniumHost, String personalToken, String credentialsId, String datetimeFormat) {
+    public TestiniumPluginGlobalConfiguration(String testiniumHost, String testiniumClientID, String credentialsId, String datetimeFormat) {
         this.testiniumHost = testiniumHost;
         this.datetimeFormat = datetimeFormat;
         this.credentialsId = credentialsId;
-        this.personalToken = personalToken;
+        this.testiniumClientID = testiniumClientID;
         load();
     }
 
@@ -55,7 +55,7 @@ public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
     }
 
     public TestiniumPluginConfiguration getConfiguration() {
-        return new TestiniumPluginConfiguration(testiniumHost, personalToken, credentialsId, datetimeFormat);
+        return new TestiniumPluginConfiguration(testiniumHost, testiniumClientID, credentialsId, datetimeFormat);
     }
 
 
@@ -108,10 +108,10 @@ public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
         return FormValidation.ok();
     }
 
-    public FormValidation doCheckPersonalToken(@QueryParameter String personalToken) {
+    public FormValidation doCheckTestiniumClientID(@QueryParameter String testiniumClientID) {
 
-        if (personalToken == null || personalToken.isEmpty()) {
-            return FormValidation.error("Personal token cannot be empty");
+        if (testiniumClientID == null || testiniumClientID.isEmpty()) {
+            return FormValidation.error("Testinium Client ID cannot be empty");
         }
         return FormValidation.ok();
     }
