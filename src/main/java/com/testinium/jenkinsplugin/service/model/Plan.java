@@ -14,6 +14,8 @@ public class Plan implements Serializable {
     private Integer id;
     @SerializedName("plan_name")
     private String planName;
+    @SerializedName("company_id")
+    private Long companyId;
     @SerializedName("group_plan")
     private Boolean groupPlan;
     @SerializedName("description")

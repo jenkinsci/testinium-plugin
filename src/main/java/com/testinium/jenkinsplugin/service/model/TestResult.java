@@ -26,29 +26,19 @@ public class TestResult implements Serializable {
     private String sessionId;
     @SerializedName("message")
     private String message;
-    @SerializedName("screenshots_enabled")
-    private Boolean screenshotEnabled;
     @SerializedName("video_enabled")
     private Boolean videoEnabled;
     @SerializedName("performance_data_enabled")
     private Boolean performanceDataEnabled;
-    @SerializedName("issue_tracker_key")
-    private String issueTrackerKey;
-    @SerializedName("test_key")
-    private String testKey;
-    @SerializedName("fetched_files")
-    private String fetchedFiles;
-    @SerializedName("retry_test_result_id")
-    private Integer retryTestResultId;
     @SerializedName("scenario_id")
     private String scenarioId;
-    @SerializedName("plan_id")
+    @SerializedName(value = "plan_id", alternate = "test_plan.id")
     private Integer planId;
-    @SerializedName("project_id")
+    @SerializedName(value = "project_id", alternate = "project.id")
     private Integer projectId;
-    @SerializedName("environment_id")
+    @SerializedName(value = "environment_id", alternate = "environment.id")
     private String environmentId;
-    @SerializedName("execution_id")
+    @SerializedName(value = "execution_id", alternate = "test_execution.id")
     private String executionId;
     @SerializedName("video_format")
     private String videoFormat;
@@ -56,13 +46,5 @@ public class TestResult implements Serializable {
     private String nodeLogPath;
     @SerializedName("executor_log_path")
     private String executorLogPath;
-    @SerializedName("video_file_path")
-    private String videoFilePath;
-    @SerializedName("environment_info")
-    private ResultEnvironment environment;
-    @SerializedName("test_result_commands")
-    private List<TestCommands> commands;
-    @SerializedName("screen_resolution")
-    private String screenResolution;
 }
 

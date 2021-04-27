@@ -11,7 +11,12 @@ import com.testinium.jenkinsplugin.exception.TimeoutException;
 import com.testinium.jenkinsplugin.model.ExecutionResult;
 import com.testinium.jenkinsplugin.pipeline.TestiniumStep;
 import com.testinium.jenkinsplugin.service.TestiniumService;
-import com.testinium.jenkinsplugin.service.model.*;
+import com.testinium.jenkinsplugin.service.model.Company;
+import com.testinium.jenkinsplugin.service.model.Execution;
+import com.testinium.jenkinsplugin.service.model.Plan;
+import com.testinium.jenkinsplugin.service.model.Project;
+import com.testinium.jenkinsplugin.service.model.RunResult;
+import com.testinium.jenkinsplugin.service.model.TestResult;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.FilePath;
@@ -25,6 +30,17 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,18 +51,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-
 @Getter
 @Setter
 public class TestiniumPlugin extends Builder implements SimpleBuildStep {
 
     public static final int MAX_EXECUTION_RETRY_COUNT = 3;
+    public static final String COMPANY = "company";
     public static final String PROJECT = "project";
     private static final Object ADD_ACTION_LOCK = new Object() {
     };
@@ -54,6 +64,8 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
     @Setter(AccessLevel.NONE)
     private static Map<String, String> titleTextStore = new HashMap<>();
 
+    @Setter(onMethod = @__({@DataBoundSetter}))
+    Integer companyId;
     @Setter(onMethod = @__({@DataBoundSetter}))
     Integer projectId;
     @Setter(onMethod = @__({@DataBoundSetter}))
@@ -70,12 +82,14 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
     Boolean abortOnFailed = true;
 
     @DataBoundConstructor
-    public TestiniumPlugin(@Nonnull Integer projectId, @Nonnull Integer planId) {
+    public TestiniumPlugin(@Nonnull Integer companyId, @Nonnull Integer projectId, @Nonnull Integer planId) {
+        this.companyId = companyId;
         this.projectId = projectId;
         this.planId = planId;
     }
 
     public TestiniumPlugin(TestiniumStep step) {
+        this.companyId = step.getCompanyId();
         this.projectId = step.getProjectId();
         this.planId = step.getPlanId();
         this.timeoutSeconds = step.getTimeoutSeconds();
@@ -154,6 +168,11 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         listener.getLogger().println("Started");
         TestiniumService testiniumService = prepareService(run);
 
+        Company company = testiniumService.getCompany(companyId);
+        if (!isValidCompany(logger, company)) {
+            return;
+        }
+
         Project project = testiniumService.getProject(projectId);
         if (!isValidProject(logger, project)) {
             return;
@@ -174,9 +193,9 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
 
         ExecutionResult execResult = null;
         try {
-            execResult = waitForExecutionToComplete(run, logger, testiniumService, action);
+            execResult = waitForExecutionToComplete(run, logger, testiniumService, action, company);
         } catch (TimeoutException e) {
-            handleTimeout(logger, testiniumService, plan, action);
+            handleTimeout(logger, testiniumService, plan, action, company);
             run.save();
             return;
         }
@@ -188,6 +207,16 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         action.setStatus("");
 
         run.save();
+    }
+
+    private boolean isValidCompany(PrintStream logger, Company company) throws AbortException {
+        if (company == null) {
+            if (companyId == null) {
+                companyId = 0;
+            }
+            throw new AbortException(Messages.TestiniumPlugin_UnableToFind(PROJECT, projectId.toString()));
+        }
+        return true;
     }
 
     private boolean isValidProject(PrintStream logger, Project project) throws AbortException {
@@ -250,7 +279,7 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
 
         RunResult runResult = null;
         for (int i = 0; i < MAX_EXECUTION_RETRY_COUNT; i++) {
-            runResult = testiniumService.startPlan(planId);
+            runResult = testiniumService.startPlan(planId, companyId);
             if (runResult != null && runResult.getSuccessful()) {
                 break;
             }
@@ -266,7 +295,8 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
             @Nonnull Run<?, ?> run,
             PrintStream logger,
             TestiniumService testiniumService,
-            TestiniumResultAction action) throws InterruptedException, IOException, TimeoutException {
+            TestiniumResultAction action,
+            Company company) throws InterruptedException, IOException, TimeoutException {
 
         Integer executionId = action.getExecutionId();
         logger.println(Messages.TestiniumPlugin_WaitingToComplete(executionId.toString()));
@@ -278,7 +308,7 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         Boolean finished = false;
 
         while (!finished) {
-            Execution execution = testiniumService.getExecution(executionId);
+            Execution execution = testiniumService.getExecution(executionId, company.getId());
 
             if (execution.getEndDate() != null) {
                 finished = true;
@@ -300,12 +330,12 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         return executionResult;
     }
 
-    private void handleTimeout(PrintStream logger, TestiniumService testiniumService, Plan plan, TestiniumResultAction action) throws InterruptedException, AbortException {
+    private void handleTimeout(PrintStream logger, TestiniumService testiniumService, Plan plan, TestiniumResultAction action, Company company) throws InterruptedException, AbortException {
         //TODO: cancel execution
 
         Thread.sleep(1000);
 
-        Execution execution = testiniumService.getExecution(action.getExecutionId());
+        Execution execution = testiniumService.getExecution(action.getExecutionId(), company.getId());
         ExecutionResult results = action.getExecution();
         setExecutionResultValues(testiniumService, results, execution);
 
@@ -335,12 +365,10 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
         executionResult.setId(execution.getId());
         executionResult.setStartDate(execution.getStartDate());
         executionResult.setEndDate(execution.getEndDate());
-        executionResult.setResultSummary(execution.getResultSummary());
 
         List<TestResult> currentResults = new ArrayList<>();
-        if (execution.getTestResultIds() != null) {
-            for (Integer resultId : execution.getTestResultIds()) {
-                TestResult result = testiniumService.getTestResults(resultId);
+        if (execution.getTestResults() != null) {
+            for (TestResult result : execution.getTestResults()) {
                 currentResults.add(result);
             }
         }
@@ -446,16 +474,37 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
             return Messages.TestiniumPlugin_DisplayName();
         }
 
-        public ListBoxModel doFillProjectIdItems(@AncestorInPath Item project,
+        public ListBoxModel doFillCompanyIdItems(@AncestorInPath Item project,
                                                  @QueryParameter Integer projectId) {
-
             ListBoxModel m = new ListBoxModel();
 
             TestiniumService testiniumService = prepareService(project);
             if (testiniumService != null) {
                 addEmptyValue(m);
-                List<Project> projectList = testiniumService.getProjects();
+                List<Company> companyList = testiniumService.getCompanies();
 
+                for (Company c : companyList) {
+                    m.add(new ListBoxModel.Option(c.getCompanyName(), c.getId().toString(), c.getId().equals(projectId)));
+                }
+            }
+            return m;
+        }
+
+        public ListBoxModel doFillProjectIdItems(@AncestorInPath Item project,
+                                                 @QueryParameter Integer companyId,
+                                                 @QueryParameter Integer projectId) {
+            ListBoxModel m = new ListBoxModel();
+
+            TestiniumService testiniumService = prepareService(project);
+
+            if (testiniumService != null) {
+                addEmptyValue(m);
+                List<Project> projectList = new ArrayList<>();
+                try {
+                    projectList = testiniumService.getProjects(companyId);
+                } catch (Exception exception) {
+                    return m;
+                }
                 for (Project p : projectList) {
 
                     if (!p.getEnabled()) {
@@ -479,7 +528,12 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
                 addEmptyValue(m);
 
                 if (projectId != null) {
-                    List<Plan> planList = testiniumService.getPlans(projectId);
+                    List<Plan> planList = new ArrayList<>();
+                    try {
+                        planList = testiniumService.getPlans(projectId);
+                    } catch (Exception ignore) {
+                        return m;
+                    }
 
                     for (Plan p : planList) {
                         String planName = p.getPlanName();
@@ -488,12 +542,29 @@ public class TestiniumPlugin extends Builder implements SimpleBuildStep {
                         }
 
                         m.add(new ListBoxModel.Option(planName, p.getId().toString(), p.getId().equals(planId)));
-
                     }
                 }
-
             }
             return m;
+        }
+
+        public FormValidation doCheckCompanyId(@AncestorInPath Item project,
+                                               @QueryParameter Integer value) {
+            TestiniumService testiniumService = prepareService(project);
+            if (testiniumService == null) {
+                return FormValidation.error(Messages.TestiniumPluginValidation_AuthError());
+            }
+            if (value == null) {
+                return FormValidation.error(Messages.TestiniumPluginValidation_MustSelectProject());
+            }
+            Company testiniumCompany = testiniumService.getCompany(value);
+
+            if (testiniumCompany == null) {
+                return FormValidation.error(Messages.TestiniumPlugin_UnableToFind(COMPANY, value.toString()));
+            }
+
+            return FormValidation.ok();
+
         }
 
         public FormValidation doCheckProjectId(@AncestorInPath Item project,
