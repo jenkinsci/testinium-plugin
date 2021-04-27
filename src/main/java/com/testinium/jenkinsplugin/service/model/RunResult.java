@@ -12,8 +12,6 @@ import java.util.List;
 public class RunResult implements Serializable {
     @SerializedName("execution_id")
     private Integer executionId;
-    @SerializedName("unavailable_env_list")
-    private List<ResultEnvironment> unavailableEnvironments;
     @SerializedName("already_running")
     private Boolean alreadyRunning;
     @SerializedName("succesful")

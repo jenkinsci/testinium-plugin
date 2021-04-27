@@ -32,7 +32,7 @@ public class Plan implements Serializable {
     private Integer projectId;
     @SerializedName("failed_test_retry_count")
     private Integer failedRetryCount;
-    @SerializedName("screenshots_enabled")
+    @SerializedName("screen_shot_type")
     private Boolean screenshotEnabled;
     @SerializedName("video_enabled")
     private Boolean videoEnabled;
