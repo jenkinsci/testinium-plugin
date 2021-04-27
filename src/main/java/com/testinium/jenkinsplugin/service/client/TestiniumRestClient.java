@@ -8,31 +8,36 @@ import java.util.List;
 
 public interface TestiniumRestClient {
 
-    @RequestLine("GET /projects/")
-    List<Project> getProjects();
+    @RequestLine("GET /users/companies/")
+    List<Company> getCompanies();
 
-    @RequestLine("GET /projects/{projectid}")
+    @RequestLine("GET /companies/{companyId}")
+    Company getCompany(@Param("companyId") Integer companyId);
+
+    @RequestLine("GET /projects/company/{companyId}")
+    List<Project> getProjects(@Param("companyId") Integer companyId);
+
+    @RequestLine("GET /projects/{projectid}/active")
     Project getProject(@Param("projectid") Integer projectId);
 
-    @RequestLine("GET /projects/{projectid}/plans")
+    @RequestLine("GET /projects/{projectid}/plans/active")
     List<Plan> getProjectPlans(@Param("projectid") Integer projectId);
 
-    @RequestLine("GET /plans/{planid}")
+    @RequestLine("GET /plans/{planid}/active")
     Plan getPlan(@Param("planid") Integer planId);
 
-    @RequestLine("GET /plans/{planid}/run/false")
-    RunResult startPlanWithoutForce(@Param("planid") Integer planid);
+    @RequestLine("GET /plans/{planid}/run/company/{companyid}")
+    RunResult startPlanWithoutForce(@Param("planid") Integer planid, @Param("companyid") Integer companyId);
 
     @RequestLine("GET /plans/{planid}/run")
     RunResult startPlanWithForce(@Param("planid") Integer planid);
 
-    @RequestLine("GET /plans/{planid}/executions")
+    @RequestLine("GET /plans/{planid}/testExecutions")
     List<Execution> getTestExecutionsForPlan(@Param("planid") Integer planid);
 
-    @RequestLine("GET /executions/{executionid}")
-    Execution getTestExecution(@Param("executionid") Integer executionId);
+    @RequestLine("GET /testExecutions/{executionid}/company/{companyid}")
+    Execution getTestExecution(@Param("executionid") Integer executionId, @Param("companyid") Integer companyId);
 
-    @RequestLine("GET /results/{resultId}")
+    @RequestLine("GET /testResults/{resultId}")
     TestResult getTestResult(@Param("resultId") Integer resultId);
-
 }

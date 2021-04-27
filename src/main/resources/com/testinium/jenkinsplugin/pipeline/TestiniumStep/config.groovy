@@ -4,6 +4,10 @@ import lib.FormTagLib
 
 f = namespace(FormTagLib.class)
 
+f.entry(title: _("company"), field: 'companyId') {
+    f.select()
+}
+
 f.entry(title: _("project"), field: 'projectId') {
     f.select()
 }

@@ -8,17 +8,22 @@ import com.testinium.jenkinsplugin.service.client.TestiniumRestClient;
 import com.testinium.jenkinsplugin.service.deserializer.DateDeserializer;
 import com.testinium.jenkinsplugin.service.interceptor.TestiniumAuthenticationInterceptor;
 import com.testinium.jenkinsplugin.service.interceptor.TestiniumRestRequestInterceptor;
-import com.testinium.jenkinsplugin.service.model.*;
+import com.testinium.jenkinsplugin.service.model.AuthResult;
+import com.testinium.jenkinsplugin.service.model.Company;
+import com.testinium.jenkinsplugin.service.model.Execution;
+import com.testinium.jenkinsplugin.service.model.Plan;
+import com.testinium.jenkinsplugin.service.model.Project;
+import com.testinium.jenkinsplugin.service.model.RunResult;
+import com.testinium.jenkinsplugin.service.model.TestResult;
 import feign.Feign;
 import feign.form.FormEncoder;
 import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
-import org.apache.commons.httpclient.auth.InvalidCredentialsException;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import org.apache.commons.httpclient.auth.InvalidCredentialsException;
 
 public class TestiniumService {
 
@@ -86,8 +91,21 @@ public class TestiniumService {
         }
     }
 
-    public List<Project> getProjects() {
-        return restClient.getProjects();
+    public List<Company> getCompanies() {
+        return restClient.getCompanies();
+    }
+
+    public Company getCompany(Integer companyId) {
+        try {
+            return restClient.getCompany(companyId);
+        } catch (Exception ex) {
+            LOGGER.fine("Unable to get company with ID: " + companyId + " - " + ex.getMessage());
+            return null;
+        }
+    }
+
+    public List<Project> getProjects(Integer companyId) {
+        return restClient.getProjects(companyId);
     }
 
     public Project getProject(Integer projectId) {
@@ -99,15 +117,8 @@ public class TestiniumService {
         }
     }
 
-    public RunResult startPlan(Integer planId) {
-        return startPlan(planId, false);
-    }
-
-    public RunResult startPlan(Integer planId, Boolean force) {
-        if (force) {
-            return restClient.startPlanWithForce(planId);
-        }
-        return restClient.startPlanWithoutForce(planId);
+    public RunResult startPlan(Integer planId, Integer companyId) {
+        return restClient.startPlanWithoutForce(planId, companyId);
     }
 
     public List<Plan> getPlans(Integer projectId) {
@@ -131,8 +142,8 @@ public class TestiniumService {
         return restClient.getTestExecutionsForPlan(planId);
     }
 
-    public Execution getExecution(Integer executionId) {
-        return restClient.getTestExecution(executionId);
+    public Execution getExecution(Integer executionId, Integer companyId) {
+        return restClient.getTestExecution(executionId, companyId);
     }
 
     public TestResult getTestResults(Integer testResultId) {

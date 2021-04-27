@@ -1,8 +1,8 @@
 package com.testinium.jenkinsplugin.pipeline;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Inject;
 import com.testinium.jenkinsplugin.Messages;
+import com.google.inject.Inject;
 import com.testinium.jenkinsplugin.TestiniumPlugin;
 import hudson.AbortException;
 import hudson.Extension;
@@ -26,6 +26,9 @@ import java.util.Set;
 
 @Getter
 public class TestiniumStep extends Step {
+
+    @Setter(onMethod = @__({@DataBoundSetter}))
+    final Integer companyId;
     @Setter(onMethod = @__({@DataBoundSetter}))
     final Integer projectId;
     @Setter(onMethod = @__({@DataBoundSetter}))
@@ -42,7 +45,8 @@ public class TestiniumStep extends Step {
     Boolean abortOnFailed = true;
 
     @DataBoundConstructor
-    public TestiniumStep(@Nonnull Integer projectId, @Nonnull Integer planId) {
+    public TestiniumStep(@Nonnull Integer companyId, @Nonnull Integer projectId, @Nonnull Integer planId) {
+        this.companyId = companyId;
         this.projectId = projectId;
         this.planId = planId;
     }
@@ -73,6 +77,10 @@ public class TestiniumStep extends Step {
             return Messages.TestiniumStep_StartExecution();
         }
 
+        public ListBoxModel doFillCompanyIdItems(@AncestorInPath Item company,
+                                                 @QueryParameter Integer companyId) {
+            return delegate.doFillCompanyIdItems(company, companyId);
+        }
 
         public ListBoxModel doFillPlanIdItems(@AncestorInPath Item project,
                                               @QueryParameter Integer projectId, @QueryParameter Integer planId) {
@@ -80,15 +88,14 @@ public class TestiniumStep extends Step {
         }
 
         public ListBoxModel doFillProjectIdItems(@AncestorInPath Item project,
-                                                 @QueryParameter Integer projectId) {
-            return delegate.doFillProjectIdItems(project, projectId);
+                                                 @QueryParameter Integer companyId, @QueryParameter Integer projectId) {
+            return delegate.doFillProjectIdItems(project, companyId, projectId);
         }
 
         public FormValidation doCheckPlanId(@AncestorInPath Item project,
                                             @QueryParameter Integer value) {
             return delegate.doCheckPlanId(project, value);
         }
-
 
         public FormValidation doCheckProjectId(@AncestorInPath Item project,
                                                @QueryParameter Integer value) {
