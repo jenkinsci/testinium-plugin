@@ -24,7 +24,6 @@ public class TestiniumPluginConfiguration {
 
         configuration.fillEmptyValues(testiniumGlobalConfig);
 
-
         String credentialsId = configuration.getCredentialsId();
         String dateFormat = configuration.getDateTimeFormat();
         String personalToken = configuration.getPersonalToken();
@@ -40,6 +39,7 @@ public class TestiniumPluginConfiguration {
         if (personalToken != null && personalToken.isEmpty()) {
             configuration.setPersonalToken(null);
         }
+
 
         return configuration;
     }

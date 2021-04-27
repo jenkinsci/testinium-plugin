@@ -42,10 +42,8 @@ private void createTable() {
             tr {
                 th(class: 'id') { raw(_("ID_COLUMN")) }
                 th(class: 'status') { raw(_("STATUS_COLUMN")) }
-                th(class: 'environment') { raw(_("ENVIRONMENT_COLUMN")) }
                 th(class: 'run-date') { raw(_("RUN_DATE_COLUMN")) }
                 th(class: 'runtime') { raw(_("RUN_TIME_COLUMN")) }
-                th(class: 'message') { raw(_("MESSAGE_COLUMN")) }
             }
         }
         tbody {
@@ -53,8 +51,6 @@ private void createTable() {
             for (TestResult testResult : execution.testResults) {
                 tableRow(testResult)
             }
-
-
         }
     }
 
@@ -64,7 +60,7 @@ private void tableRow(testResult) {
     tr {
         td {
             span(class: 'mobile-th') { raw("${_("ID_COLUMN")}:") }
-            a(href: "http://testinium.io/report/detail/${testResult.id}", target: '_blank') {
+            a(href: "http://testinium.io/report/detail/${testResult.executionId}", target: '_blank') {
                 raw("#${testResult.id}")
             }
         }
@@ -72,21 +68,6 @@ private void tableRow(testResult) {
             span(class: 'mobile-th') { raw("${_("STATUS_COLUMN")}:") }
             span(class: "badge badge-${testResult.level.toLowerCase()}") {
                 raw(testResult.level)
-            }
-        }
-        def env = testResult.environment
-        def os = env.operatingSystem
-
-        td {
-            span(class: 'mobile-th') { raw("${_("ENVIRONMENT_COLUMN")}:") }
-            div(class: 'operating-system') {
-                img(src: "${my.getResource("icons/os/${os.code}.png")}")
-                span(class: 'text') {
-                    raw(os.platform)
-                }
-            }
-            div(class: 'browser') {
-                createBrowserInfo(os, env)
             }
         }
 
@@ -115,25 +96,6 @@ private void tableRow(testResult) {
 
         td(class: 'message-column') {
             p("${testResult.message}")
-        }
-    }
-}
-
-private void createBrowserInfo(os, env) {
-    if (os.mobile) {
-        def device = env.devices.get(0)
-        def deviceModel = device.deviceModels.get(0)
-        img(src: "${my.getResource("icons/browser/mobile-phone-icon-black.png")}")
-        span(class: 'text', title: "${device.name} ${deviceModel.name}") {
-            raw("${device.name} ${deviceModel.name}")
-        }
-    } else {
-        def browser = env.browsers.get(0)
-        def browserVersion = browser.versions.get(0).version
-        img(src: "${my.getResource("icons/browser/${browser.code}.png")}")
-
-        span(class: 'text', title: "${browser.browserName} ${browserVersion}") {
-            raw("${browser.browserName} ${browserVersion}")
         }
     }
 }

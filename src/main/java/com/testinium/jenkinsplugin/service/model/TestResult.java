@@ -32,22 +32,12 @@ public class TestResult implements Serializable {
     private Boolean videoEnabled;
     @SerializedName("performance_data_enabled")
     private Boolean performanceDataEnabled;
-    @SerializedName("issue_tracker_key")
-    private String issueTrackerKey;
-    @SerializedName("test_key")
-    private String testKey;
-    @SerializedName("fetched_files")
-    private String fetchedFiles;
-    @SerializedName("retry_test_result_id")
-    private Integer retryTestResultId;
     @SerializedName("scenario_id")
     private String scenarioId;
     @SerializedName("plan_id")
     private Integer planId;
     @SerializedName("project_id")
     private Integer projectId;
-    @SerializedName("environment_id")
-    private String environmentId;
     @SerializedName("execution_id")
     private String executionId;
     @SerializedName("video_format")
@@ -58,8 +48,8 @@ public class TestResult implements Serializable {
     private String executorLogPath;
     @SerializedName("video_file_path")
     private String videoFilePath;
-    @SerializedName("environment_info")
-    private ResultEnvironment environment;
+    @SerializedName("environment")
+    private Environment environment;
     @SerializedName("test_result_commands")
     private List<TestCommands> commands;
     @SerializedName("screen_resolution")

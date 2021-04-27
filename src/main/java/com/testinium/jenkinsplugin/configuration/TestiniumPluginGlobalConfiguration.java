@@ -2,9 +2,9 @@ package com.testinium.jenkinsplugin.configuration;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.testinium.jenkinsplugin.Messages;
+import com.testinium.jenkinsplugin.credentials.TestiniumCredentials;
 import hudson.Extension;
 import hudson.model.FreeStyleProject;
 import hudson.model.Item;
@@ -92,9 +92,9 @@ public class TestiniumPluginGlobalConfiguration extends GlobalConfiguration {
                                 ? Tasks.getAuthenticationOf((Queue.Task) currentProject)
                                 : ACL.SYSTEM,
                         currentProject,
-                        StandardUsernamePasswordCredentials.class,
+                        TestiniumCredentials.class,
                         Collections.<DomainRequirement>emptyList(),
-                        CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class))
+                        CredentialsMatchers.instanceOf(TestiniumCredentials.class))
                 .includeCurrentValue(credentialsId);
     }
 
